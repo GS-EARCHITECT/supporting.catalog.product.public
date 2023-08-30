@@ -24,7 +24,7 @@ import resources_cache.model.dto.PlaceClassDetail_DTO;;
 
 @Repository("resourcesCacheRepo")
 public class ResourcesCache_Repo implements IResourcesCache_Repo {
-	private static final Logger logger = LoggerFactory.getLogger(ResourcesCache_Repo.class);
+//	private static final Logger logger = LoggerFactory.getLogger(ResourcesCache_Repo.class);
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -411,7 +411,7 @@ public class ResourcesCache_Repo implements IResourcesCache_Repo {
 		return cArrayList;
 	}
 
-	// no DTO basis - get supplierclassList from resource_catalog_compclasses
+	// no DTO basis - get partyclassList from resource_catalog_compclasses
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	public CopyOnWriteArrayList<Long> findSuppliersForResourceCatalog(Long resCatSeqNo) {
 		String qryString = "select company_class_seq_no from resource_catalog_compclasses where resource_catalog_seq_no = :resCatSeqNo";
@@ -435,8 +435,8 @@ public class ResourcesCache_Repo implements IResourcesCache_Repo {
 		return compClassList2;
 	}
 
-	// noDTO - get suppliersList for suppliers in supplierClassList from
-	// supplier_class_details
+	// noDTO - get partysList for partys in partyClassList from
+	// party_class_details
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	public CopyOnWriteArrayList<Long> findSupplierListForSupplierClasses(CopyOnWriteArrayList<Long> partyClassList) {
 		String qryString = "select party_seq_no from party_class_details where party_class_seq_no in (:partyClassList)";
@@ -462,7 +462,7 @@ public class ResourcesCache_Repo implements IResourcesCache_Repo {
 		return sList;
 	}
 
-	// noDTO - get resources for suppliersList from SUPPLIER_PRODSERV_details
+	// noDTO - get resources for partysList from parrtyLIER_PRODSERV_details
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	public CopyOnWriteArrayList<Long> findResourcesForSuppliers(CopyOnWriteArrayList<Long> partyList) {
 		String qryString = "select resource_seq_no from party_prodserv_details where party_seq_no in (:partyList)";
@@ -513,11 +513,11 @@ public class ResourcesCache_Repo implements IResourcesCache_Repo {
 		return rateList2;
 	}
 
-	// noDTO - resources for matching prodservseqnos in SUPPLIER_PRODSERV_details &
-	// SUPPLIER_PRODSERV_ratings & ratingsList
+	// noDTO - resources for matching prodservseqnos in parrtyLIER_PRODSERV_details &
+	// parrtyLIER_PRODSERV_ratings & ratingsList
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	public CopyOnWriteArrayList<Long> findResourcesForRatings(CopyOnWriteArrayList<Float> ratingsList) {
-		String qryString = "select a.resource_seq_no from supplier_prodserv_details a, supplier_prodserv_ratings b where (a.SUPP_PRODSERV_SEQ_NO = b.SUPP_PRODSERV_SEQ_NO and b.rating in (:ratingsList))";
+		String qryString = "select a.resource_seq_no from party_prodserv_details a, party_prodserv_ratings b where (a.parrty_PRODSERV_SEQ_NO = b.parrty_PRODSERV_SEQ_NO and b.rating in (:ratingsList))";
 		CopyOnWriteArrayList<Long> resList2 = null;
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("ratingsList", ratingsList);
@@ -584,7 +584,7 @@ public class ResourcesCache_Repo implements IResourcesCache_Repo {
 	}
 
 	// noDTO - get resources for matching prodservseqnos in
-	// SUPPLIER_PRODSERV_details & SUPPLIER_PRODSERV_prices & priceRange
+	// parrtyLIER_PRODSERV_details & parrtyLIER_PRODSERV_prices & priceRange
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	public CopyOnWriteArrayList<Long> findResourcesForPriceRange(Float lPrice, Float hPrice) {
 		String qryString = "select a.resource_seq_no from party_prodserv_details a, party_prodserv_prices b where a.party_PRODSERV_SEQ_NO = b.party_PRODSERV_SEQ_NO and b.amount >= :lPrice and b.amount <= :hPrice";
