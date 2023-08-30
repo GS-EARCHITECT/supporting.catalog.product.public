@@ -60,7 +60,6 @@ public class ResourcesCache_Service implements IResourcesCache_Service
 	@Autowired
 	private IResourceCatalogPriceRangeCache_Service resourceCatalogPriceRangeCacheServ; 
 
-	@SuppressWarnings("unchecked")
 	@Override
 	@Cacheable(value="resourcesCache",key = "new org.springframework.cache.interceptor.SimpleKey(#resCatSeqNo)")
 	@HystrixCommand(fallbackMethod = "getAllResources")    
@@ -71,16 +70,17 @@ public class ResourcesCache_Service implements IResourcesCache_Service
 		// get resourceclassList from resource_catalog_prodstructure
 		CopyOnWriteArrayList<Long> resList = new CopyOnWriteArrayList<Long>();
 		List<Long> gg = null;
-		CompletableFuture<ArrayList<Long>> resFuture=null;
-		CompletableFuture<ArrayList<Long>> locFuture=null;
 		CompletableFuture<ArrayList<Long>> cmpFuture=null;
+		CompletableFuture<ArrayList<Long>> resFuture=null;
+		CompletableFuture<ArrayList<Long>> locFuture=null;	
 		CompletableFuture<ArrayList<Long>> rateFuture=null;
 		CompletableFuture<ArrayList<Long>> prnFuture=null;
 						
 		try {
-			resFuture = this.getResourcesForResourceClassList(resCatSeqNo);
-			locFuture=this.getResourcesForLocationClassList(resCatSeqNo);
+			
 			cmpFuture=getResourcesForSuppliers(resCatSeqNo);
+			resFuture = this.getResourcesForResourceClassList(resCatSeqNo);
+			locFuture=this.getResourcesForLocationClassList(resCatSeqNo);			
 			rateFuture=getResourcesForRatings(resCatSeqNo);
 			prnFuture=getResourcesForPriceRange(resCatSeqNo);
 		} catch (InterruptedException e1) {
@@ -91,8 +91,9 @@ public class ResourcesCache_Service implements IResourcesCache_Service
 			e1.printStackTrace();
 		}
 		       
-		       CompletableFuture<Void> futureResult = CompletableFuture.allOf(resFuture,locFuture, cmpFuture, rateFuture, prnFuture);
-		       ArrayList<Long> allList = (ArrayList<Long>) Stream.of(resFuture,locFuture, cmpFuture, rateFuture, prnFuture).map(CompletableFuture::join).flatMap(List::stream).collect(Collectors.toList());
+		       //CompletableFuture<Void> futureResult = CompletableFuture.allOf(resFuture,locFuture, cmpFuture, rateFuture, prnFuture);
+		       CompletableFuture<Void> futureResult = CompletableFuture.allOf(cmpFuture,resFuture,locFuture,rateFuture,prnFuture);
+		       ArrayList<Long> allList = (ArrayList<Long>) Stream.of(cmpFuture,resFuture,locFuture,rateFuture,prnFuture).map(CompletableFuture::join).flatMap(List::stream).collect(Collectors.toList());
 		       
 		return allList;
 		},asyncExecutor);

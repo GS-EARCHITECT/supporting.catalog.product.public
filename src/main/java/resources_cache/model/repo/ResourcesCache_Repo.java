@@ -438,10 +438,10 @@ public class ResourcesCache_Repo implements IResourcesCache_Repo {
 	// noDTO - get suppliersList for suppliers in supplierClassList from
 	// supplier_class_details
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
-	public CopyOnWriteArrayList<Long> findSupplierListForSupplierClasses(CopyOnWriteArrayList<Long> suppClassList) {
-		String qryString = "select supplier_seq_no from supplier_class_details where supplier_class_seq_no in (:suppClassList)";
+	public CopyOnWriteArrayList<Long> findSupplierListForSupplierClasses(CopyOnWriteArrayList<Long> partyClassList) {
+		String qryString = "select party_seq_no from party_class_details where party_class_seq_no in (:partyClassList)";
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		mapSqlParameterSource.addValue("suppClassList", suppClassList);
+		mapSqlParameterSource.addValue("partyClassList", partyClassList);
 		CompletableFuture<CopyOnWriteArrayList<Long>> futurejj = CompletableFuture.supplyAsync(() -> {
 			List<Long> suppList = namedParameterJdbcTemplate.queryForList(qryString, mapSqlParameterSource, Long.class);
 			CopyOnWriteArrayList<Long> cList = new CopyOnWriteArrayList<Long>();
@@ -464,10 +464,10 @@ public class ResourcesCache_Repo implements IResourcesCache_Repo {
 
 	// noDTO - get resources for suppliersList from SUPPLIER_PRODSERV_details
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
-	public CopyOnWriteArrayList<Long> findResourcesForSuppliers(CopyOnWriteArrayList<Long> suppList) {
-		String qryString = "select resource_seq_no from supplier_prodserv_details where supplier_seq_no in (:suppList)";
+	public CopyOnWriteArrayList<Long> findResourcesForSuppliers(CopyOnWriteArrayList<Long> partyList) {
+		String qryString = "select resource_seq_no from party_prodserv_details where party_seq_no in (:partyList)";
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		mapSqlParameterSource.addValue("suppList", suppList);
+		mapSqlParameterSource.addValue("partyList", partyList);
 		CompletableFuture<CopyOnWriteArrayList<Long>> future = CompletableFuture.supplyAsync(() -> {
 			List<Long> resList = namedParameterJdbcTemplate.queryForList(qryString, mapSqlParameterSource, Long.class);
 			CopyOnWriteArrayList<Long> cList = new CopyOnWriteArrayList<Long>();
@@ -587,7 +587,7 @@ public class ResourcesCache_Repo implements IResourcesCache_Repo {
 	// SUPPLIER_PRODSERV_details & SUPPLIER_PRODSERV_prices & priceRange
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	public CopyOnWriteArrayList<Long> findResourcesForPriceRange(Float lPrice, Float hPrice) {
-		String qryString = "select a.resource_seq_no from supplier_prodserv_details a, supplier_prodserv_prices b where a.SUPP_PRODSERV_SEQ_NO = b.SUPP_PRODSERV_SEQ_NO and b.amount >= :lPrice and b.amount <= :hPrice";
+		String qryString = "select a.resource_seq_no from party_prodserv_details a, party_prodserv_prices b where a.party_PRODSERV_SEQ_NO = b.party_PRODSERV_SEQ_NO and b.amount >= :lPrice and b.amount <= :hPrice";
 		CopyOnWriteArrayList<Long> resList2 = null;
 
 		CompletableFuture<CopyOnWriteArrayList<Long>> future = CompletableFuture.supplyAsync(() -> {
